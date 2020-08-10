@@ -103,7 +103,6 @@
                 this.click = this.click.bind(this);
                 this.stop = this.stop.bind(this);
                 this.reset = this.reset.bind(this);
-                this.counter = this.props.counter;
                 this.state = { counter : 0}
             }
 
@@ -111,7 +110,7 @@
                 console.log("START");
                 document.getElementById("start_counter").disabled = true;
                 document.getElementById("stop_counter").disabled = false;
-                this.timer = setInterval(() => { this.setState((prevState, props) => ({ counter: prevState.counter + parseInt(this.counter) })) }, 1000)
+                this.timer = setInterval(() => { this.setState((prevState, props) => ({ counter: prevState.counter + this.props.counter })) }, 1000)
             }
 
             stop() {
@@ -132,7 +131,7 @@
                     <div>
                         <div className="card">
                             <div className="card-body">
-                                <button className="btn btn-primary" id="start_counter" onClick={this.click}>Start (+{this.counter}) !</button>
+                                <button className="btn btn-primary" id="start_counter" onClick={this.click}>Start (+{this.props.counter}) !</button>
                                 <p>{this.state.counter}</p>
                                 <button className="btn btn-danger" id="stop_counter" onClick={this.stop}>Stop !</button>
                                 <button className="btn btn-info" id="reset_counter" onClick={this.reset}>Reset !</button>
@@ -150,8 +149,8 @@
             render() {
                 return (
                     <div>
-                        <Button counter= '1' />
-                        <Button counter= '2' />
+                        <Button counter= {1} />
+                        <Button counter= {2} />
                     </div>
                 );
             }
