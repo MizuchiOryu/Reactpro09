@@ -103,7 +103,7 @@
                 this.click = this.click.bind(this);
                 this.stop = this.stop.bind(this);
                 this.reset = this.reset.bind(this);
-                this.state = { counter : 0}
+                this.state = { counter: 0 }
             }
 
             click(event) {
@@ -143,14 +143,12 @@
             }
         }
 
-
-
         class AllCounter extends React.Component {
             render() {
                 return (
                     <div>
-                        <Button counter= {1} />
-                        <Button counter= {2} />
+                        <Button counter={1} />
+                        <Button counter={2} />
                     </div>
                 );
             }
@@ -165,7 +163,21 @@
                     { id: 100, title: "Angular" },
                     { id: 7, title: "Symfony" },
                     { id: 27, title: "MongoDB" },
-                ]
+                ];
+            }
+            render() {
+                return (
+                    <div>
+                        <div className="card">
+                            <div className="card-body">
+                                {this.posts.map((post) => {
+                                    console.log(post);
+                                    <p>ID : {post.id} , Title : {post.title}</p>
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                )
             }
         }
 
@@ -174,7 +186,7 @@
             render() {
                 return (
                     <div>
-                        
+                        <Post />
                     </div>
                 )
             }
@@ -183,7 +195,8 @@
         ReactDOM.render(
             // <App choice="Dragon" />,
             // <Clock message="Hello Clock" />,
-            <AllCounter />,
+            // <AllCounter />,
+            <AppPost />,
             document.getElementById('root')
         );
 
