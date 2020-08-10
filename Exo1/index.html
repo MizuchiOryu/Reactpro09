@@ -62,10 +62,19 @@
             constructor(props) {
                 super(props);
                 this.state = { count: new Date().getSeconds() }
-                setInterval(() => {
+            }
+
+            
+
+            componentDidMount() {
+                console.log('Component Crée');
+                this.timer = setInterval(() => {
                     this.setState({ count: this.state.count < 60 ? this.state.count  + 1 : 0})
                 }, 1000);
-
+            }
+            componentWillUnmount() {
+                console.log('Component Detruit');
+                clearInterval(this.timer)
             }
 
             render() {
@@ -74,13 +83,6 @@
                         <p>Secondes: {this.state.count} </p>
                     </div>
                 );
-            }
-
-            componentDidMount() {
-                console.log('Component Crée');
-            }
-            componentWillUnmount() {
-                console.log('Component Detruit');
             }
         }
 
@@ -91,7 +93,7 @@
         );
 
         const removeCompent = setInterval(() => {
-            // ReactDOM.unmountComponentAtNode(document.getElementById('root'))
+            ReactDOM.unmountComponentAtNode(document.getElementById('root'))
         }, 7000);
     </script>
 </body>
