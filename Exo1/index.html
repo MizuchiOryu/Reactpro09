@@ -46,37 +46,53 @@
             }
         }
 
+        class App extends React.Component {
 
-        const Clock = (props) => {
-            return (
-                <div>
-                    time: {new Date().getSeconds()}
-                </div>
-            )
+            render() {
+                return (
+                    <div>
+                        {this.props.choice == "Dragon" ? <ListDragon /> : <ListKnight />}
+                    </div>
+                )
+            }
         }
 
 
-        class App extends React.Component {
-
+        class Clock extends React.Component {
             constructor(props) {
                 super(props);
-                this.choice = false;
+                this.state = { count: new Date().getSeconds() }
+                setInterval(() => {
+                    this.setState({ count: this.state.count < 60 ? this.state.count  + 1 : 0})
+                }, 1000);
+
             }
 
             render() {
                 return (
                     <div>
-                        {this.choice ? <ListDragon /> : <ListKnight />}
-                        <Clock />
+                        <p>Secondes: {this.state.count} </p>
                     </div>
-                )
+                );
+            }
+
+            componentDidMount() {
+                console.log('Component Crée');
+            }
+            componentWillUnmount() {
+                console.log('Component Detruit');
             }
         }
-       
+
         ReactDOM.render(
-            <App />,
+            // <App choice="Dragon" />,
+            <Clock message="Hello Clock" />,
             document.getElementById('root')
         );
+
+        const removeCompent = setInterval(() => {
+            // ReactDOM.unmountComponentAtNode(document.getElementById('root'))
+        }, 7000);
     </script>
 </body>
 
