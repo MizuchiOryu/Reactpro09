@@ -7,6 +7,17 @@
     <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        crossorigin="anonymous"></script>
 
     <style>
         .heading {
@@ -64,12 +75,12 @@
                 this.state = { count: new Date().getSeconds() }
             }
 
-            
+
 
             componentDidMount() {
                 console.log('Component Crée');
                 this.timer = setInterval(() => {
-                    this.setState( (prevState, props) => ({ count: prevState.count + 1 }));
+                    this.setState((prevState, props) => ({ count: prevState.count + 1 }));
                 }, 1000);
             }
             componentWillUnmount() {
@@ -86,15 +97,147 @@
             }
         }
 
+        class Button extends React.Component {
+            constructor(props) {
+                super(props);
+                this.click = this.click.bind(this);
+                this.stop = this.stop.bind(this);
+                this.state = { counter_1: 0,counter_2: 0}
+            }
+            click(counter) {
+                console.log("START");
+                console.log(this.props);
+                console.log(this.state.counter_1);
+                {counter ==  "counter_1" ? 
+                    this.timer_1 = setInterval(() => {this.setState((prevState, props) => ({ counter_1: prevState.counter_1 + 1 }))}, 1000)
+                    :
+                    this.timer_2 =  setInterval(() => {this.setState((prevState, props) => ({ counter_1: prevState.counter_1 + 2 }))}, 1000)
+                }
+                // this.timer = setInterval(() => {
+                //     {counter ==  "counter_1" ?  this.setState((prevState, props) => ({ counter_1: prevState.counter_1 + 1 })) : this.setState((prevState, props) => ({ counter_2: prevState.counter_2 + 2 })) }
+                // }, 1000);
+                
+               
+            }
+
+            stop(counter) {
+                console.log("STOP");
+                console.log(this.props);
+                console.log(counter);
+                {counter ==  "counter_1" ?  clearInterval(this.timer_1) : clearInterval(this.timer_2) }
+               
+            }
+            render() {
+                return (
+                    <div>
+                        <div className="card">
+                            <div className="card-body">
+                                <button className="btn btn-primary" onClick={this.click("counter_1")}>Start (+1) !</button>
+                                <p>{this.state.counter_1}</p>
+                                <button className="btn btn-danger" onClick={this.stop("counter_1")}>Stop !</button>
+                            </div>
+                            
+                        </div>
+                        <div className="card">
+                            <div className="card-body">
+                                <button className="btn btn-info" onClick={this.click("counter_2")}>Start (+2) !</button>
+                                <p>{this.state.counter_2}</p>
+                                <button className="btn btn-danger" onClick={this.stop("counter_2")}>Stop !</button>
+                            </div>
+                            
+                        </div>
+                    </div>
+                )
+            }
+        }
+
+
+        class Counter1 extends React.Component{
+            constructor(props) {
+                super(props);
+                this.click = this.click.bind(this);
+                this.stop = this.stop.bind(this);
+                this.state = { counter: 0}
+            }
+
+            click() {
+                console.log("START");
+                this.timer = setInterval(() => {this.setState((prevState, props) => ({ counter: prevState.counter + 1 }))}, 1000)
+            }
+
+            stop() {
+                console.log("STOP");
+                clearInterval(this.timer)
+               
+            }
+            render() {
+                return (
+                    <div>
+                        <div className="card">
+                            <div className="card-body">
+                                <button className="btn btn-primary" onClick={this.click}>Start (+1) !</button>
+                                <p>{this.state.counter}</p>
+                                <button className="btn btn-danger" onClick={this.stop}>Stop !</button>
+                            </div>
+                            
+                        </div>
+                    </div>
+                )
+            }
+        }
+
+        class Counter2 extends React.Component{
+            constructor(props) {
+                super(props);
+                this.click = this.click.bind(this);
+                this.stop = this.stop.bind(this);
+                this.state = { counter: 0}
+            }
+
+            click() {
+                this.timer = setInterval(() => {this.setState((prevState, props) => ({ counter: prevState.counter + 2 }))}, 1000)
+            }
+
+            stop() {
+                clearInterval(this.timer)
+            }
+            render() {
+                return (
+                    <div>
+                        <div className="card">
+                            <div className="card-body">
+                                <button className="btn btn-primary" onClick={this.click}>Start (+2) !</button>
+                                <p>{this.state.counter}</p>
+                                <button className="btn btn-danger" onClick={this.stop}>Stop !</button>
+                            </div>
+                            
+                        </div>
+                    </div>
+                )
+            }
+        }
+
+        class AllCounter extends React.Component {
+            render() {
+                return (
+                    <div>
+                        <Counter1/>
+                        <Counter2/>
+                    </div>
+                );
+            }
+        }
+
         ReactDOM.render(
             // <App choice="Dragon" />,
-            <Clock message="Hello Clock" />,
+            // <Clock message="Hello Clock" />,
+            <AllCounter />,
             document.getElementById('root')
         );
 
-        const removeCompent = setInterval(() => {
-            ReactDOM.unmountComponentAtNode(document.getElementById('root'))
-        }, 7000);
+        // const removeCompent = setInterval(() => {
+        //     ReactDOM.unmountComponentAtNode(document.getElementById('root'))
+        // }, 7000);
     </script>
 </body>
 
