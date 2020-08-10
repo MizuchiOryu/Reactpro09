@@ -110,26 +110,35 @@
                 console.log("START");
                 let counter = event.target.id
                 document.getElementById(counter).disabled = true;
-                {counter ==  "counter_1" ? 
+                {counter ==  "start_counter_1" ? 
+                    document.getElementById("stop_counter_1").disabled = false
+                    :
+                    document.getElementById("stop_counter_2").disabled = false
+                }
+                {counter ==  "start_counter_1" ? 
                     this.timer_1 = setInterval(() => {this.setState((prevState, props) => ({ counter_1: prevState.counter_1 + 1 }))}, 1000)
                     :
-                    this.timer_2 =  setInterval(() => {this.setState((prevState, props) => ({ counter_2: prevState.counter_1 + 2 }))}, 1000)
+                    this.timer_2 =  setInterval(() => {this.setState((prevState, props) => ({ counter_2: prevState.counter_2 + 2 }))}, 1000)
                 }
             }
 
             stop(event) {
                 console.log("STOP");
                 let counter = event.target.id
-                document.getElementById("counter_1").disabled = false;
                 document.getElementById(counter).disabled = true;
-                {counter ==  "counter_1" ?  clearInterval(this.timer_1) : clearInterval(this.timer_2) };
+                {counter ==  "stop_counter_1" ? 
+                    document.getElementById("start_counter_1").disabled = false
+                    :
+                    document.getElementById("start_counter_2").disabled = false
+                }
+                {counter ==  "stop_counter_1" ? clearInterval(this.timer_1) : clearInterval(this.timer_2) };
                
             }
             
             reset(event){
                 console.log("RESET");
                 let counter = event.target.id
-                {counter ==  "counter_1" ?
+                {counter ==  "reset_counter_1" ?
                     this.setState((prevState, props) => ({ counter_1: 0 }))
                     :
                     this.setState((prevState, props) => ({ counter_2: 0 }))
@@ -141,19 +150,19 @@
                     <div>
                         <div className="card">
                             <div className="card-body">
-                                <button className="btn btn-primary" id="counter_1" onClick={this.click}>Start (+1) !</button>
+                                <button className="btn btn-primary" id="start_counter_1" onClick={this.click}>Start (+1) !</button>
                                 <p>{this.state.counter_1}</p>
-                                <button className="btn btn-danger" id="counter_1" onClick={this.stop}>Stop !</button>
-                                <button className="btn btn-info" id="counter_1" onClick={this.reset}>Reset !</button>
+                                <button className="btn btn-danger"  id="stop_counter_1" onClick={this.stop}>Stop !</button>
+                                <button className="btn btn-info" id="reset_counter_1" onClick={this.reset}>Reset !</button>
                             </div>
                             
                         </div>
                         <div className="card">
                             <div className="card-body">
-                                <button className="btn btn-primary" id="counter_2" onClick={this.click}>Start (+2) !</button>
+                                <button className="btn btn-primary" id="start_counter_2" onClick={this.click}>Start (+2) !</button>
                                 <p>{this.state.counter_2}</p>
-                                <button className="btn btn-danger" id="counter_2" onClick={this.stop}>Stop !</button>
-                                <button className="btn btn-info" id="counter_1" onClick={this.reset}>Reset !</button>
+                                <button className="btn btn-danger" id="stop_counter_2" onClick={this.stop}>Stop !</button>
+                                <button className="btn btn-info" id="reset_counter_2" onClick={this.reset}>Reset !</button>
                             </div>
                             
                         </div>
