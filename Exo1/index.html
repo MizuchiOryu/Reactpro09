@@ -69,7 +69,7 @@
             componentDidMount() {
                 console.log('Component Crée');
                 this.timer = setInterval(() => {
-                    this.setState({ count: this.state.count < 60 ? this.state.count  + 1 : 0})
+                    this.setState( (prevState, props) => ({ count: prevState.count + 1 }));
                 }, 1000);
             }
             componentWillUnmount() {
