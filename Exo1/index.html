@@ -103,81 +103,81 @@
                 this.click = this.click.bind(this);
                 this.stop = this.stop.bind(this);
                 this.reset = this.reset.bind(this);
-                this.state = { counter_1: 0,counter_2: 0}
-            }
-            
-            click(event) {
-                console.log("START");
-                let counter = event.target.id
-                document.getElementById(counter).disabled = true;
-                {counter ==  "start_counter_1" ? 
-                    document.getElementById("stop_counter_1").disabled = false
-                    :
-                    document.getElementById("stop_counter_2").disabled = false
-                }
-                {counter ==  "start_counter_1" ? 
-                    this.timer_1 = setInterval(() => {this.setState((prevState, props) => ({ counter_1: prevState.counter_1 + 1 }))}, 1000)
-                    :
-                    this.timer_2 =  setInterval(() => {this.setState((prevState, props) => ({ counter_2: prevState.counter_2 + 2 }))}, 1000)
-                }
+                this.counter = this.props.counter;
+                this.state = { counter : 0}
             }
 
-            stop(event) {
+            click(event) {
+                console.log("START");
+                document.getElementById("start_counter").disabled = true;
+                document.getElementById("stop_counter").disabled = false;
+                this.timer = setInterval(() => { this.setState((prevState, props) => ({ counter: prevState.counter + parseInt(this.counter) })) }, 1000)
+            }
+
+            stop() {
                 console.log("STOP");
-                let counter = event.target.id
-                document.getElementById(counter).disabled = true;
-                {counter ==  "stop_counter_1" ? 
-                    document.getElementById("start_counter_1").disabled = false
-                    :
-                    document.getElementById("start_counter_2").disabled = false
-                }
-                {counter ==  "stop_counter_1" ? clearInterval(this.timer_1) : clearInterval(this.timer_2) };
-               
+                document.getElementById("stop_counter").disabled = true;
+                document.getElementById("start_counter").disabled = false
+
+                clearInterval(this.timer);
+
             }
-            
-            reset(event){
-                console.log("RESET");
-                let counter = event.target.id
-                {counter ==  "reset_counter_1" ?
-                    this.setState((prevState, props) => ({ counter_1: 0 }))
-                    :
-                    this.setState((prevState, props) => ({ counter_2: 0 }))
-                }
+
+            reset() {
+                this.setState((prevState, props) => ({ counter: 0 }))
             }
-            
+
             render() {
                 return (
                     <div>
                         <div className="card">
                             <div className="card-body">
-                                <button className="btn btn-primary" id="start_counter_1" onClick={this.click}>Start (+1) !</button>
-                                <p>{this.state.counter_1}</p>
-                                <button className="btn btn-danger"  id="stop_counter_1" onClick={this.stop}>Stop !</button>
-                                <button className="btn btn-info" id="reset_counter_1" onClick={this.reset}>Reset !</button>
+                                <button className="btn btn-primary" id="start_counter" onClick={this.click}>Start (+{this.counter}) !</button>
+                                <p>{this.state.counter}</p>
+                                <button className="btn btn-danger" id="stop_counter" onClick={this.stop}>Stop !</button>
+                                <button className="btn btn-info" id="reset_counter" onClick={this.reset}>Reset !</button>
                             </div>
-                            
-                        </div>
-                        <div className="card">
-                            <div className="card-body">
-                                <button className="btn btn-primary" id="start_counter_2" onClick={this.click}>Start (+2) !</button>
-                                <p>{this.state.counter_2}</p>
-                                <button className="btn btn-danger" id="stop_counter_2" onClick={this.stop}>Stop !</button>
-                                <button className="btn btn-info" id="reset_counter_2" onClick={this.reset}>Reset !</button>
-                            </div>
-                            
+
                         </div>
                     </div>
                 )
             }
         }
 
+
+
         class AllCounter extends React.Component {
             render() {
                 return (
                     <div>
-                        <Button/>
+                        <Button counter= '1' />
+                        <Button counter= '2' />
                     </div>
                 );
+            }
+        }
+
+        class Post extends React.Component {
+            constructor(props) {
+                super(props);
+                this.posts = [
+                    { id: 16, title: "React JS" },
+                    { id: 11, title: "React Native" },
+                    { id: 100, title: "Angular" },
+                    { id: 7, title: "Symfony" },
+                    { id: 27, title: "MongoDB" },
+                ]
+            }
+        }
+
+        class AppPost extends React.Component {
+
+            render() {
+                return (
+                    <div>
+                        
+                    </div>
+                )
             }
         }
 
