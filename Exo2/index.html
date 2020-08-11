@@ -33,8 +33,7 @@
         class UserForm extends React.Component {
             constructor(props) {
                 super(props);
-                this.state = { value: '' , status: null };
-                this.list_user = [];
+                this.state = { value: '', status: null ,list_user : []};
             }
             handleChange = (event) => {
                 this.setState({ value: event.target.value });
@@ -42,29 +41,29 @@
             handleSubmit = (event) => {
                 console.log(`New User : ${this.state.value}`);
                 event.preventDefault();
-                if (this.list_user.includes(this.state.value)) {
-                    console.log("DEJA PRESENT");
+                if (this.state.list_user.includes(this.state.value)) {
                     this.setState((props) => ({
-                        status:true
+                        status: true
                     }))
-                }else{
-                    console.log("PAS PRESENT");
-                    this.list_user.push(this.state.value)
+                } else {
+                    let new_user = [...this.state.list_user];
+                    new_user.push(this.state.value);
                     this.setState((props) => ({
-                        status:false
-                    }))
+                        status: false,
+                        list_user : new_user
+                    }));
                 }
             }
 
-            error(){
+            error() {
                 return (
                     <div className="alert alert-danger" role="alert">
-                        User exist 
+                        User exist
                     </div>
                 )
             }
-            
-            succes(){
+
+            succes() {
                 return (
                     <div className="alert alert-success" role="alert">
                         Succes Add
@@ -75,13 +74,28 @@
             render() {
 
                 return (
-                    <form onSubmit={this.handleSubmit}>
-                        <div className="form-group">
-                            <input type="text" value={this.state.value} onChange={this.handleChange} placeholder="Enter Username" />
+                    <div>
+                        <div>
+                            <form onSubmit={this.handleSubmit}>
+                                <div className="form-group">
+                                    <input type="text" value={this.state.value} onChange={this.handleChange} placeholder="Enter Username" />
+                                </div>
+                                <input className="btn btn-primary" type="submit" value="Add" />
+                                {this.state.status == true ? this.error() : this.succes()}
+                            </form>
                         </div>
-                        <input className="btn btn-primary" type="submit" value="Add" />
-                        {this.state.status == true ?  this.error(): this.succes()}
-                    </form>
+                        <div>
+                            {this.state.list_user.map((user, index) => {
+                                console.log(user);
+                                return <p>{user}</p>
+                            })}
+
+                        </div>
+
+
+                    </div>
+
+
                 );
             }
         }
