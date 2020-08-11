@@ -203,7 +203,7 @@
                     height: '100px',
                     width: '100px',
                     display: 'inline-block',
-                    border:'solid',
+                    border: 'solid',
                 };
                 return (
                     <div style={divStyle}></div>
@@ -231,11 +231,11 @@
 
             render() {
 
-                for (let n = 0; n <=15; n++) {
-                    this.list_square.push(<Square key={n} color={this.randomcolors()}/>);
-                    if(n % this.colors.length == 3) this.list_square.push(<br/>)
+                for (let n = 0; n <= 15; n++) {
+                    this.list_square.push(<Square key={n} color={this.randomcolors()} />);
+                    if (n % this.colors.length == 3) this.list_square.push(<br />)
                 }
-                
+
                 return (
                     this.list_square
                 )
@@ -245,30 +245,57 @@
         class Hash extends React.Component {
             constructor(props) {
                 super(props);
-                this.click = this.click.bind(this);
-                this.state = { elems: this.props.elems }
+                this.state = { key: this.props.key, hash: this.props.hash }
             }
 
+
+            handler(key, event) {
+                this.remove(key);
+                // let filter_array = this.state.elems.filter(elems => elems.key != key);
+                // this.setState((props) => ({
+                //     elems: filter_array
+                // }));
+            }
+
+            render() {
+                return (
+                    <tr>
+                        <th scope="row">{this.state.key}</th>
+                        <td>{this.state.key}</td>
+                        <td><button className='btn btn-danger' onClick={(e) => this.handler(this.state.key, e)} >Delete</button></td>
+                    </tr>
+                )
+            }
+        }
+
+        class DashboardHash extends React.Component {
+
+            constructor(props) {
+                super(props);
+                this.state = { elems: [] }
+            }
+
+
+
             click() {
-                const numbersObject = [...this.state.elems]
-                numbersObject.push(
-                    {
-                        key: Math.random() + "",
-                        hash: Math.random().toString(16)
-                    }
-                );
+                const numbersObject = [...this.state.elems];
+
+                numbersObject.push(<Hash key={Math.random() + ""} hash={Math.random().toString(16)} remove={this.removeHandler} />);
+
                 this.setState((props) => ({
                     elems: numbersObject
                 }));
             }
 
+            removeHandler(key) {
 
-            handler(key, event) {
                 let filter_array = this.state.elems.filter(elems => elems.key != key);
+
                 this.setState((props) => ({
                     elems: filter_array
                 }));
             }
+
 
             render() {
                 return (
@@ -286,37 +313,12 @@
                                     </thead>
                                     <tbody>
                                         {this.state.elems.map((element, index) => {
-                                            return <tr key={index}>
-                                                <th scope="row">{element.key}</th>
-                                                <td>{element.hash}</td>
-                                                <td><button className='btn btn-danger' onClick={(e) => this.handler(element.key, e)} >Delete</button></td>
-                                            </tr>
+                                            return element
                                         })}
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                    </div>
-                )
-            }
-        }
-
-        class DashboardHash extends React.Component {
-
-            constructor(props) {
-                super(props);
-                this.state = { elems: [] }
-            }
-
-            removeHandler() {
-
-            }
-
-
-            render() {
-                return (
-                    <div>
-                        <Hash elems={this.state.elems} remove={this.removeHandler} />
                     </div>
                 )
             }
@@ -329,8 +331,8 @@
             // <Clock message="Hello Clock" />,
             // <AllCounter />,
             // <AppPost />,
-            <Checkerboard />,
-            // <DashboardHash />,
+            // <Checkerboard />,
+            <DashboardHash />,
             document.getElementById('root')
         );
 
