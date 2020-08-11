@@ -272,18 +272,15 @@
             }
 
             click() {
-                // const numbersObject = [...this.state.elems];
+                const numbersObject = [...this.state.elems];
 
-                // numbersObject.push({
-                //     key_hash: Math.random() + "",
-                //     hash: Math.random().toString(16),
-                // });
+                numbersObject.push({
+                    key_hash: Math.random() + "",
+                    hash: Math.random().toString(16),
+                });
 
-                this.setState((prevState, props) => ({
-                    elems: prevState.elems.push({
-                        key_hash: Math.random() + "",
-                        hash: Math.random().toString(16),
-                    })
+                this.setState((props) => ({
+                    elems:numbersObject
                 }))
 
                 console.log(this.state.elems);
@@ -312,9 +309,7 @@
                                     </thead>
                                     <tbody>
                                         {this.state.elems.map((element, index) => {
-                                            if (element) {
                                                 return <Hash key={index} key_hash={element.key_hash} hash={element.hash} remove={this.removeHandler} />
-                                            }
                                         })}
                                     </tbody>
                                 </table>
