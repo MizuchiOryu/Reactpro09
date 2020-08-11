@@ -245,24 +245,18 @@
         class Hash extends React.Component {
             constructor(props) {
                 super(props);
-                this.state = { key: this.props.key, hash: this.props.hash }
             }
 
-
-            handler(key, event) {
-                this.remove(key);
-                // let filter_array = this.state.elems.filter(elems => elems.key != key);
-                // this.setState((props) => ({
-                //     elems: filter_array
-                // }));
+            handler(key) {
+                this.props.remove(key);
             }
 
             render() {
                 return (
                     <tr>
-                        <th scope="row">{this.state.key}</th>
-                        <td>{this.state.key}</td>
-                        <td><button className='btn btn-danger' onClick={(e) => this.handler(this.state.key, e)} >Delete</button></td>
+                        <th scope="row">{this.props.key_hash}</th>
+                        <td>{this.props.hash}</td>
+                        <td><button className='btn btn-danger' onClick={this.handler(this.props.key_hash)} >Delete</button></td>
                     </tr>
                 )
             }
@@ -272,30 +266,35 @@
 
             constructor(props) {
                 super(props);
-                this.state = { elems: [] }
+                this.click = this.click.bind(this);
+                this.removeHandler = this.removeHandler.bind(this);
+                this.state = { elems: [] };
             }
 
-
-
             click() {
-                const numbersObject = [...this.state.elems];
+                // const numbersObject = [...this.state.elems];
 
-                numbersObject.push(<Hash key={Math.random() + ""} hash={Math.random().toString(16)} remove={this.removeHandler} />);
+                // numbersObject.push({
+                //     key_hash: Math.random() + "",
+                //     hash: Math.random().toString(16),
+                // });
 
-                this.setState((props) => ({
-                    elems: numbersObject
-                }));
+                this.setState((prevState, props) => ({
+                    elems: prevState.elems.push({
+                        key_hash: Math.random() + "",
+                        hash: Math.random().toString(16),
+                    })
+                }))
+
+                console.log(this.state.elems);
             }
 
             removeHandler(key) {
-
-                let filter_array = this.state.elems.filter(elems => elems.key != key);
-
+                let filter_array = this.state.elems.filter(elems => elems.key_hash != key);
                 this.setState((props) => ({
                     elems: filter_array
                 }));
             }
-
 
             render() {
                 return (
@@ -313,7 +312,9 @@
                                     </thead>
                                     <tbody>
                                         {this.state.elems.map((element, index) => {
-                                            return element
+                                            if (element) {
+                                                return <Hash key={index} key_hash={element.key_hash} hash={element.hash} remove={this.removeHandler} />
+                                            }
                                         })}
                                     </tbody>
                                 </table>
