@@ -106,7 +106,7 @@
                 this.state = { counter: 0 }
             }
 
-            click(event) {
+            click() {
                 console.log("START");
                 document.getElementById("start_counter").disabled = true;
                 document.getElementById("stop_counter").disabled = false;
@@ -170,9 +170,9 @@
                     <div>
                         <div className="card">
                             <div className="card-body">
-                                {this.posts.map((post) => {
+                                {this.posts.map((post, index) => {
                                     console.log(post);
-                                    <p>ID : {post.id} , Title : {post.title}</p>
+                                    return <p key={index}>ID : {post.id} , Title : {post.title}</p>
                                 })}
                             </div>
                         </div>
@@ -192,11 +192,145 @@
             }
         }
 
+
+        class Square extends React.Component {
+
+            constructor(props) {
+                super(props);
+            }
+
+            render() {
+                return (
+                    <div>
+                        <Post />
+                    </div>
+                )
+            }
+        }
+
+        class Checkerboard extends React.Component {
+
+            constructor(props) {
+                super(props);
+                const colors = [
+                    "#1e88e5",
+                    "#6ab7ff",
+                    "#005cb2",
+                    "#1976d2",
+                ];
+            }
+
+            render() {
+                return (
+                    <div>
+                        <Post />
+                    </div>
+                )
+            }
+        }
+
+        class Damier extends React.Component {
+            render() {
+                return (
+                    <div>
+                        <Post />
+                    </div>
+                )
+            }
+        }
+
+
+        class Hash extends React.Component {
+            constructor(props) {
+                super(props);
+                this.click = this.click.bind(this);
+                this.state = { elems: this.props.elems }
+            }
+
+            click() {
+                const numbersObject = [...this.state.elems]
+                numbersObject.push(
+                    {
+                        key: Math.random() + "",
+                        hash: Math.random().toString(16)
+                    }
+                );
+                this.setState((props) => ({
+                    elems: numbersObject
+                }));
+            }
+            
+
+            handler(key,event){
+                console.log(key);
+                let filter_array = this.state.elems.filter(elems => elems.key != key);
+                this.setState((props) => ({
+                    elems: filter_array
+                }));
+            }
+
+            render() {
+                return (
+                    <div>
+                        <button className="btn btn-info" onClick={this.click}>Generate Random Hash !</button>
+                        <div className="card">
+                            <div className="card-body">
+                                <table className="table table-dark">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Hash</th>
+                                            <th scope="col">Remove</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {this.state.elems.map((element, index) => {
+                                            return <tr key={index}>
+                                                <th scope="row">{element.key}</th>
+                                                <td>{element.hash}</td>
+                                                <td><button className='btn btn-danger' onClick={(e) => this.handler(element.key, e)} >Delete</button></td>
+                                            </tr>
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+        }
+
+
+
+        class DashboardHash extends React.Component {
+
+            constructor(props) {
+                super(props);
+                this.state = { elems: [] }
+            }
+
+            removeHandler(){
+
+            }
+
+
+            render() {
+                return (
+                    <div>
+                        <Hash elems={this.state.elems} remove={this.removeHandler}/>
+                    </div>
+                )
+            }
+
+        }
+
         ReactDOM.render(
             // <App choice="Dragon" />,
             // <Clock message="Hello Clock" />,
             // <AllCounter />,
-            <AppPost />,
+            // <AppPost />,
+            // <Damier />,
+            <DashboardHash/>,
             document.getElementById('root')
         );
 
