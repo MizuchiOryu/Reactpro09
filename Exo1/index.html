@@ -245,10 +245,11 @@
         class Hash extends React.Component {
             constructor(props) {
                 super(props);
+                this.handler = this.handler.bind(this);
             }
 
-            handler(key) {
-                this.props.remove(key);
+            handler() {
+                this.props.remove(this.props.key_hash);
             }
 
             render() {
@@ -256,7 +257,7 @@
                     <tr>
                         <th scope="row">{this.props.key_hash}</th>
                         <td>{this.props.hash}</td>
-                        <td><button className='btn btn-danger' onClick={this.handler(this.props.key_hash)} >Delete</button></td>
+                        <td><button className='btn btn-danger' onClick={this.handler} >Delete</button></td>
                     </tr>
                 )
             }
@@ -272,12 +273,7 @@
             }
 
             click() {
-                const numbersObject = [...this.state.elems];
-
-                numbersObject.push({
-                    key_hash: Math.random() + "",
-                    hash: Math.random().toString(16),
-                });
+                let numbersObject = [...this.state.elems,{key_hash: Math.random() + "",hash:Math.random().toString(16)}];
 
                 this.setState((props) => ({
                     elems:numbersObject
