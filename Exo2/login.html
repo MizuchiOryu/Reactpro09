@@ -49,6 +49,20 @@
 
         }
 
+        class From extends React.Component {
+            constructor(props) {
+                super(props);
+            }
+
+            render(){
+                return (
+                    <div className="form-group">
+                        <input type={this.props.type} className="form-control" name={this.props.name} value={this.props.value} onChange={this.props.handleChange} placeholder={this.props.placeholder} />
+                    </div>
+                )
+            }
+        }
+        
         class App extends React.Component {
 
             constructor(props) {
@@ -89,12 +103,8 @@
                     
                     <div>
                         <form onSubmit={this.handleSubmit}>
-                            <div className="form-group">
-                                <input type="email" className="form-control" name="username" value={this.state.username} onChange={this.handleChange} aria-describedby="emailHelp" placeholder="Enter email" />
-                            </div>
-                            <div className="form-group">
-                                <input type="password" className="form-control" name="password" value={this.state.password} onChange={this.handleChange} placeholder="Password" />
-                            </div>
+                            <From type="email" name="username" value={this.state.username} handleChange= {this.handleChange} placeholder="Entre Email"/>
+                            <From type="password" name="password" value={this.state.password} handleChange= {this.handleChange} placeholder="Entre Password"/>
                             {this.state.status != null ? <Message status={this.state.status} /> : null}
                             <button type="submit" className="btn btn-primary">Submit</button>
                         </form>
@@ -105,7 +115,8 @@
             }
         }
 
-
+        
+        
         ReactDOM.render(
             <App />,
 
