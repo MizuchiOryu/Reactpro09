@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Hello React</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        crossorigin="anonymous"></script>
+
+    <style>
+        .heading {
+            color: purple;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+
+
+        class Input extends React.Component {
+            constructor(props) {
+                super(props);
+            }
+
+            render() {
+                return (
+                    <div className="input-group mb-3">
+                        <div className="input-group-prepend">
+                            <span className="input-group-text" id="basic-addon1">Number {this.props.title}</span>
+                        </div>
+                        <input type="text" className="form-control" defaultValue={this.props.value} onChange={this.props.handleChange} />
+                    </div>
+                )
+            }
+        }
+
+
+        class BaseNumberInput extends React.Component {
+
+            constructor(props) {
+                super(props);
+            }
+
+            // handleChange(){
+            //     console.log('BASE NUMBER INPUT');
+            //     this.props.onNumberChanger(e.target.value)
+            // }
+
+
+            render() {
+
+                return (
+
+                    <div>
+                        <Input title={this.props.title} value={this.props.value} onChange={this.props.onNumberChanger} />
+                    </div >
+
+
+                );
+            }
+        }
+
+        class App extends React.Component {
+
+            constructor(props) {
+                super(props);
+                this.state = { binary: 0, decimal: 0 };
+            }
+
+            handleChange() {
+                let binary = ""
+                while (this.state.decimal > 0) {
+                    if (this.state.decimal % 2 == 0) {
+                        binary = "0" + binary;
+                    }
+                    else {
+                        binary = "1" + binary;
+                    }
+
+                    this.state.decimal = Math.floor(this.state.decimal / 2);
+                }
+
+                this.setState({ binary: binary });
+            }
+
+            onNumberChanger(event) {
+                console.log('APP');
+                console.log(event.target.value)
+                this.setState({ decimal: event.target.value });
+            }
+
+            render() {
+
+                return (
+
+                    <div>
+                        <form>
+                            <BaseNumberInput title="Decimal" value={this.state.decimal} onChangeBase={this.handleChange} />
+                            <BaseNumberInput title="Binary" value={this.state.binary} />
+                        </form>
+                       
+                    </div >
+
+
+                );
+            }
+        }
+
+
+        ReactDOM.render(
+            <App />,
+
+            document.getElementById('root')
+        );
+    </script>
+</body>
+
+</html>
