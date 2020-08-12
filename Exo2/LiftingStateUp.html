@@ -34,6 +34,18 @@
         class Input extends React.Component {
             constructor(props) {
                 super(props);
+                this.onChangeValue = this.onChangeValue.bind(this);
+                this.state = { value: this.props.value }
+            }
+
+            onChangeValue(event) {
+                console.log('INPUT');
+                let value = event.target.value
+                this.setState((props) => ({
+                    value: value
+                }))
+                console.log(this.state.value);
+                // this.props.onChange(this.state.value);
             }
 
             render() {
@@ -42,7 +54,7 @@
                         <div className="input-group-prepend">
                             <span className="input-group-text" id="basic-addon1">Number {this.props.title}</span>
                         </div>
-                        <input type="text" className="form-control" defaultValue={this.props.value} onChange={this.props.handleChange} />
+                        <input type="text" value={this.state.value} className="form-control" onChange={this.onChangeValue} />
                     </div>
                 )
             }
@@ -55,18 +67,18 @@
                 super(props);
             }
 
-            // handleChange(){
-            //     console.log('BASE NUMBER INPUT');
-            //     this.props.onNumberChanger(e.target.value)
-            // }
-
 
             render() {
 
                 return (
 
                     <div>
-                        <Input title={this.props.title} value={this.props.value} onChange={this.props.onNumberChanger} />
+                        <div className="input-group mb-3">
+                            <div className="input-group-prepend">
+                                <span className="input-group-text" id="basic-addon1">Number {this.props.title}</span>
+                            </div>
+                            <input type="text" value={this.props.value} className="form-control" onChange={this.props.onChange} />
+                        </div>
                     </div >
 
 
@@ -78,10 +90,22 @@
 
             constructor(props) {
                 super(props);
-                this.state = { binary: 0, decimal: 0 };
+                this.state = { binary: '', decimal: '' };
             }
 
-            handleChange() {
+            handleChange(event) {
+                let value = event.target.value
+                this.setState((props) => ({
+                    decimal: value,
+                    binary:this.convert()
+                }));
+
+                console.log(this.state);
+
+
+            }
+
+            convert() {
                 let binary = ""
                 while (this.state.decimal > 0) {
                     if (this.state.decimal % 2 == 0) {
@@ -94,13 +118,7 @@
                     this.state.decimal = Math.floor(this.state.decimal / 2);
                 }
 
-                this.setState({ binary: binary });
-            }
-
-            onNumberChanger(event) {
-                console.log('APP');
-                console.log(event.target.value)
-                this.setState({ decimal: event.target.value });
+                return binary
             }
 
             render() {
@@ -109,10 +127,10 @@
 
                     <div>
                         <form>
-                            <BaseNumberInput title="Decimal" value={this.state.decimal} onChangeBase={this.handleChange} />
+                            <BaseNumberInput title="Decimal" value={this.state.decimal} onChange={(e) => this.handleChange(e)} />
                             <BaseNumberInput title="Binary" value={this.state.binary} />
                         </form>
-                       
+
                     </div >
 
 
