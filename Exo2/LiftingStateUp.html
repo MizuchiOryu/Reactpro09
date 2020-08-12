@@ -6,58 +6,37 @@
     <title>Hello React</title>
     <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <!-- babel => compilation du JSX -->
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
-        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
-        crossorigin="anonymous"></script>
 
-    <style>
-        .heading {
-            color: purple;
-        }
-    </style>
 </head>
 
 <body>
+
+
+
     <div id="root"></div>
+
     <script type="text/babel">
 
+        const decimalToBinary = (num) => {
+            if (num == '') return 0;
+            let b = [];
+            while (num > 0) {
+                let r = num % 2;
+                b.push(r);
 
-        class Input extends React.Component {
-            constructor(props) {
-                super(props);
-                this.onChangeValue = this.onChangeValue.bind(this);
-                this.state = { value: this.props.value }
+                num = Math.trunc(num / 2);
             }
+            return b.reverse().join('');
+        }
 
-            onChangeValue(event) {
-                console.log('INPUT');
-                let value = event.target.value
-                this.setState((props) => ({
-                    value: value
-                }))
-                console.log(this.state.value);
-                // this.props.onChange(this.state.value);
-            }
+        const binaryToDecimal = (bnum) => {
+            if (bnum == '') return 0;
 
-            render() {
-                return (
-                    <div className="input-group mb-3">
-                        <div className="input-group-prepend">
-                            <span className="input-group-text" id="basic-addon1">Number {this.props.title}</span>
-                        </div>
-                        <input type="text" value={this.state.value} className="form-control" onChange={this.onChangeValue} />
-                    </div>
-                )
-            }
+            return bnum.split('').reverse()
+                .map((b, i) => parseInt(b) * 2 ** i)
+                .reduce((acc, curr) => acc + curr);
         }
 
 
@@ -65,85 +44,75 @@
 
             constructor(props) {
                 super(props);
+
+                this.state = {
+                    value: 0
+                }
             }
 
+            handleChange = (e) => {
+                this.props.handleChange(e.target.value, this.props.type);
+                this.setState({
+                    value: e.target.value
+                })
+            }
+
+            shouldComponentUpdate(nextProps,nextState){
+                console.log("UPDATE");
+                this.state.value = nextProps.value;
+                return true;
+            }
 
             render() {
-
-                return (
-
-                    <div>
-                        <div className="input-group mb-3">
-                            <div className="input-group-prepend">
-                                <span className="input-group-text" id="basic-addon1">Number {this.props.title}</span>
-                            </div>
-                            <input type="text" value={this.props.value} className="form-control" onChange={this.props.onChange} />
-                        </div>
-                    </div >
-
-
-                );
+                return (<div className="base_number_input">
+                    {this.props.type}  : <input name="number_input" type="text" value={this.state.value} onChange={this.handleChange} />
+                </div>)
             }
+
         }
 
         class App extends React.Component {
 
             constructor(props) {
                 super(props);
-                this.state = { binary: '', decimal: '' };
+                this.state = {
+                    decimal: 0,
+                    binary: 0
+                }
             }
 
-            handleChange(event) {
-                let value = event.target.value
-                this.setState((props) => ({
-                    decimal: value,
-                    binary:this.convert()
-                }));
-
-                console.log(this.state);
-
-
-            }
-
-            convert() {
-                let binary = ""
-                while (this.state.decimal > 0) {
-                    if (this.state.decimal % 2 == 0) {
-                        binary = "0" + binary;
-                    }
-                    else {
-                        binary = "1" + binary;
-                    }
-
-                    this.state.decimal = Math.floor(this.state.decimal / 2);
+            handleChange = (value, type) => {
+                let decimal = 0;
+                let binary = 0;
+                console.log(type);
+                if (type === 'decimal') {
+                    binary = decimalToBinary(value);
+                } else {
+                    decimal = binaryToDecimal(value);
                 }
 
-                return binary
+                this.setState({
+                    binary, decimal
+                });
+                
+
             }
 
             render() {
-
                 return (
-
-                    <div>
-                        <form>
-                            <BaseNumberInput title="Decimal" value={this.state.decimal} onChange={(e) => this.handleChange(e)} />
-                            <BaseNumberInput title="Binary" value={this.state.binary} />
-                        </form>
-
-                    </div >
-
-
-                );
+                    <div className="app">
+                        <BaseNumberInput type="decimal" handleChange={this.handleChange} value={this.state.decimal} type="decimal" />
+                        <BaseNumberInput type="binary" handleChange={this.handleChange} value={this.state.binary}  type="binary"/>
+                    </div>
+                )
             }
         }
 
-
         ReactDOM.render(
             <App />,
-
             document.getElementById('root')
         );
+
     </script>
 </body>
 
