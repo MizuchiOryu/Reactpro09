@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Hello React</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        crossorigin="anonymous"></script>
+
+    <style>
+        .heading {
+            color: purple;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+
+
+        class Message extends React.Component {
+            constructor(props) {
+                super(props);
+            }
+
+            render() {
+                return (
+                    <div>
+                        <small id="emailHelp" className="form-text text-muted"> {this.props.status == true ? "Success" : "Email or password no valid"} </small>
+                    </div>
+                )
+
+                
+            }
+            
+
+        }
+
+        class App extends React.Component {
+
+            constructor(props) {
+                super(props);
+                this.state = { username: '', password: '' , status:null};
+                this.list_user = [
+                    { username: "toto", password: "toto" },
+                    { username: "toto@gmail.com", password: "toto" }
+                ]
+            }
+
+            handleChange = (event) => {
+                const target = event.target;
+                this.setState({ [target.name]: target.value });
+            }
+            handleSubmit = (event) => {
+                console.log(`Username : ${this.state.username}`);
+                console.log(`Password : ${this.state.password}`);
+                event.preventDefault();
+
+                if (this.list_user.some(element => element.username == this.state.username && element.password == this.state.password )) {
+                        console.log('TRUE');
+                        this.setState((props) => ({
+                            status: false
+                        }));
+                }
+                else{
+                        console.log('FALSE');
+                        this.list_user = [...this.list_user, { username: this.state.username, password: this.state.password }];;
+                        this.setState((props) => ({
+                            status: true
+                        }));
+                }
+            }
+            render() {
+
+                return (
+                    
+                    <div>
+                        <form onSubmit={this.handleSubmit}>
+                            <div className="form-group">
+                                <input type="email" className="form-control" name="username" value={this.state.username} onChange={this.handleChange} aria-describedby="emailHelp" placeholder="Enter email" />
+                            </div>
+                            <div className="form-group">
+                                <input type="password" className="form-control" name="password" value={this.state.password} onChange={this.handleChange} placeholder="Password" />
+                            </div>
+                            {this.state.status != null ? <Message status={this.state.status} /> : null}
+                            <button type="submit" className="btn btn-primary">Submit</button>
+                        </form>
+                    </div >
+
+
+                );
+            }
+        }
+
+
+        ReactDOM.render(
+            <App />,
+
+            document.getElementById('root')
+        );
+    </script>
+</body>
+
+</html>
