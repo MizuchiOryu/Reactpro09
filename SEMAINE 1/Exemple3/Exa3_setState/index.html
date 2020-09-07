@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Hello React</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+    <!-- permet de compiler le JSX -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <style>
+        .heading{
+            color: purple;
+        }
+    </style>
+</head>
+<body>
+<div id="root"></div>
+<div id="root2"></div>
+
+<script type="text/babel">
+
+class TestState extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {count:0};
+  }
+  
+  increment(){
+    // Dans ce cas affichera 1 dans le DOM
+    // this.setState({
+    //     count: this.state.count + this.props.step,
+    // });
+    // this.setState({
+    //     count: this.state.count + this.props.step,
+    // });
+    // this.setState({
+    //     count: this.state.count + this.props.step,
+    // });
+
+    // Bonne technique affichera 3 dans le DOM
+    this.setState( (prevState, props) => ({ count: prevState.count + props.step }));
+    this.setState( (prevState, props) => ({ count: prevState.count + props.step }));
+    this.setState( (prevState, props) => ({ count: prevState.count + props.step }));
+  }
+
+  // Attendre que le Component soit monté dans le DOM
+  componentDidMount() {
+    this.increment();
+  }
+
+  render() {
+    return (
+      <div>
+        <p>Count: {this.state.count} </p>
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <TestState step={1} />,
+  document.getElementById('root')
+);
+</script>
+</body>
+
+</html>

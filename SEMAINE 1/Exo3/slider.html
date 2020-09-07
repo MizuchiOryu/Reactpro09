@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Hello React</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        crossorigin="anonymous"></script>
+
+    <style>
+        .card,
+        .card img {
+            width: 80px !important;
+            border: none;
+            height: 80px !important;
+        }
+    </style>
+
+</head>
+
+
+
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+
+        class Image extends React.Component {
+            constructor(props) {
+                super(props);
+                // this.state = { image: this.props.image }
+                // this.click = this.click.bind(this);
+            }
+
+            shouldComponentUpdate(nextProps, nextState) {
+                console.log("UPDATE");
+                this.state.image = nextProps.image;
+                return true;
+            }
+
+
+            render() {
+                // <img className="card-img-top" src={this.state.image} />
+                return (
+                    <div className="card w-10">
+                        
+                    </div>
+                )
+            }
+
+
+
+        }
+
+        class View extends React.Component {
+            render() {
+                return (
+                    <div>
+                        <Button />
+                        <Display />
+                    </div>
+                )
+            }
+        }
+
+        class List extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = { images: this.props.images }
+            }
+            render() {
+                return (
+                    <div className="list">
+                        <div className="card-group" id="controls">
+                            {this.state.images.map((image, index) => {
+                                return <Image key={index} image={image} />
+                            })}
+                        </div>
+                    </div>
+                )
+            }
+        }
+
+        class Display extends React.Component {
+            render() {
+                return (
+                    <div className="display">
+                        <div id="carouselExampleControls" className="carousel slide" data-ride="carousel">
+                            <div className="carousel-inner">
+                                <div className="carousel-item active">
+                                    <img className="d-block w-100" src="..." alt="First slide" />
+                                </div>
+                                <div className="carousel-item">
+                                    <img className="d-block w-100" src="..." alt="Second slide" />
+                                </div>
+                                <div className="carousel-item">
+                                    <img className="d-block w-100" src="..." alt="Third slide" />
+                                </div>
+                            </div>
+                            <a className="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                                <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span className="sr-only">Previous</span>
+                            </a>
+                            <a className="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                                <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span className="sr-only">Next</span>
+                            </a>
+                        </div>
+                    </div>
+
+                );
+            }
+        }
+
+        class Button extends React.Component {
+            render() {
+                return (
+                    <div className="button">
+
+                    </div>
+
+                );
+            }
+        }
+
+        class Loader extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = {jsonload:false,dataload:false}
+            }
+
+            start() {
+                fetch(this.props.url)
+                    .then(res => res.json())
+                    .then(
+                        (result) => {
+                            console.log(result);
+                            this.setState({jsonload:true});
+                            result.images.forEach((image) => {
+                                let counter_image = 0;
+
+                                let src = result.path + result.full_folder + "/" + image.name + '.' + result.extension + "?raw=true";
+
+                                const new_image = new Image()
+                                new_image.src = src;
+                                
+                                new_image.onload = () => {
+                                    console.log("counter_image:" +counter_image + "result.images.lenght" + result.images.lenght );
+                                    counter_image++
+                                    if (result.images.lenght == counter_image) {
+                                        this.setState({dataload:true});
+                                    }
+                                }
+
+
+                            })
+                        },
+                        (error) => {
+                            this.setState({
+                                isLoaded: true,
+                                error
+                            });
+                        }
+                    )
+                console.log(this.state);
+            }
+
+            render() {
+                return (
+                    <div className="list"></div>
+                )
+            }
+
+            componentDidMount() {
+                this.start();
+            }
+        }
+        
+        
+        class App extends React.Component {
+            constructor(props) {
+                super(props);
+                this.list_images = [
+                    "https://github.com/playoutprod/2020-3wa-react01/blob/master/01_FORMULAIRES_LIFTINGUP/exercices/slider/images/thumbnails/photo-1545381550-40a2ebad6135.jpg?raw=true",
+                    "https://github.com/playoutprod/2020-3wa-react01/blob/master/01_FORMULAIRES_LIFTINGUP/exercices/slider/images/thumbnails/photo-1553481187-be93c21490a9.jpg?raw=true",
+                    "https://github.com/playoutprod/2020-3wa-react01/blob/master/01_FORMULAIRES_LIFTINGUP/exercices/slider/images/thumbnails/photo-1472457897821-70d3819a0e24.jpg?raw=true",
+                    "https://github.com/playoutprod/2020-3wa-react01/blob/master/01_FORMULAIRES_LIFTINGUP/exercices/slider/images/thumbnails/photo-1504177847824-d075f5706770.jpg?raw=true",
+                    "https://github.com/playoutprod/2020-3wa-react01/blob/master/01_FORMULAIRES_LIFTINGUP/exercices/slider/images/thumbnails/photo-1511882150382-421056c89033.jpg?raw=true",
+                    "https://github.com/playoutprod/2020-3wa-react01/blob/master/01_FORMULAIRES_LIFTINGUP/exercices/slider/images/thumbnails/photo-1534595461757-4974c5072dff.jpg?raw=true"
+                ];
+                this.url = "https://raw.githubusercontent.com/playoutprod/2020-3wa-react01/master/01_FORMULAIRES_LIFTINGUP/exercices/slider/data.json";
+            }
+
+
+            render() {
+                // <List images={this.list_images} />
+                return (
+                    <div>
+                        <Loader url={this.url} />
+
+                    </div>
+
+                );
+            }
+        }
+
+        ReactDOM.render(
+            <App />,
+
+            document.getElementById('root')
+        );
+    </script>
+</body>
+
+</html>

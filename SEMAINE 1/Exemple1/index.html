@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Hello React</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+    <!-- permet de compiler le JSX -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <style>
+        .heading{
+            color: purple;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <div id="root2"></div>
+
+    <script type="text/babel">
+        let start = () => {
+            // Component
+            const Hello = () => {
+                return (
+                    <div className="heading" >
+                        <h1>Time: {new Date().toLocaleTimeString() }</h1>
+                    </div>
+                )
+            }
+            // rendu dans le DOM
+            ReactDOM.render(
+                <Hello />,
+                document.getElementById('root')
+            );
+        }
+
+        setInterval(start, 1000);
+
+const Hello = (props) => {
+  return <h1>Hello, {props.name}</h1>;
+}
+
+const App = () => {
+  return (
+    <div>
+      <Hello name="Sara" />
+      <Hello name="Cahal" />
+      <Hello name="Edite" />
+    </div>
+  );
+}
+
+ReactDOM.render(
+  <App />,
+  document.getElementById('root2')
+);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Slider</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+
+        class Arrow extends React.Component {
+            clickHandler = () => {
+
+                this.props.clickHandler(this.props.dir)
+
+
+            }
+
+            render() {
+                return (
+                    <div className={"arrow " + this.props.dir} onClick={this.clickHandler}>
+
+                    </div>
+                );
+            }
+        }
+
+        class Buttons extends React.Component {
+            render() {
+                const style = {
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    position: "absolute",
+                    width: "100%",
+                    height: "100%",
+                    padding: "5%",
+                    top: "0"
+                }
+
+                return (
+                    <div className="buttons" style={style}>
+                        {this.props.children}
+                    </div>
+                );
+            }
+        }
+
+        class Display extends React.Component {
+            render() {
+                const style = { width: "400px", overflow: "hidden" }
+                const styleView = {
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center"
+                }
+                return (
+                    <div className="display" style={styleView}>
+                        <div style={style}>{this.props.children}</div>
+                    </div>
+                )
+            }
+        }
+
+        class View extends React.Component {
+            constructor(props) {
+                super(props)
+
+                this.state = {
+                    position: 0
+                };
+            };
+
+            styleView = {
+                width: "100vw",
+                overflow: "hidden",
+                position: "relative"
+            }
+
+            clickHandler = (direction) => {
+
+                let position = direction === "right" ? this.state.position + 1 : this.state.position - 1;
+
+                if (position < 0) {
+                    position = 0;
+                } else if (position >= this.props.data.images.length) {
+                    position = this.props.data.images.length - 1;
+                }
+
+                this.setState({
+                    position: position
+                })
+
+            }
+
+            shouldComponentUpdate(nextProps, nextState) {
+                console.log("nextProps", nextProps)
+                console.log("nextState", nextState)
+
+                if (this.state.position === nextState.position) {
+                    this.state.position = nextProps.currentIndex;
+                }
+
+                return true
+            }
+
+            render() {
+                const { data } = this.props
+                console.log(this.state)
+
+                let currentIndex = this.props.currentIndex;
+
+                return (
+                    <div className="view" style={this.styleView}>
+                        <Display>
+                            <List data={data} size="big" currentpos={this.state.position} />
+                        </Display>
+                        <Buttons>
+                            <Arrow dir="left" clickHandler={this.clickHandler} />
+                            <Arrow dir="right" clickHandler={this.clickHandler} />
+                        </Buttons>
+                    </div>
+                );
+            }
+        }
+
+        class List extends React.Component {
+            constructor(props) {
+                super(props);
+            }
+
+            handleNothing = () => {
+                return false;
+            }
+
+            handleClick = (event) => {
+                let pictureIndex = event.target.attributes.index.value;
+
+                this.props.handleClick(pictureIndex);
+            }
+
+            render() {
+                let style = { width: "80px", height: "80px" }
+                let listStyle = {}
+                let folder = "thumb_folder"
+
+                if (this.props.size === "big") {
+                    folder = "full_folder"
+                    style = { width: "400px", height: "320px" }
+                    listStyle = {
+                        width: this.props.data.images.length * 400 + "px",
+                        position: "relative",
+                        left: -this.props.currentpos * 400 + "px"
+                    }
+                }
+
+                return (<div className="list" style={listStyle}>
+                    {this.props.data.images.map((image, index) => {
+                        const src = this.props.data.path + this.props.data[folder] + "/" + image.name + "." + this.props.data.extension + "?raw=true";
+
+                        return <img key={index} index={index} src={src} style={style} onClick={this.props.size === "big" ? this.handleNothing : this.handleClick}></img>
+                    })}
+                </div>)
+            }
+        }
+
+        class Loader extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = { loadedImages: false, loadedJson: false };
+            }
+
+            start() {
+                fetch(this.props.url).then(
+                    (response) => {
+                        return response.json();
+                    }
+                ).then(json => {
+                    this.setState({ loadedJson: true });
+                    let numImagesLoaded = 0;
+                    json.images.forEach(
+                        (imageData) => {
+                            const image = new Image();
+                            image.src = json.path + json.full_folder + "/" + imageData.name + "." + json.extension + "?raw=true";
+                            image.onload = () => {
+
+                                imageData.width = image.width;
+                                imageData.height = image.height;
+
+                                numImagesLoaded++;
+                                if (json.images.length == numImagesLoaded) {
+                                    this.setState({ loadedImages: true });
+                                    this.props.onLoad(true, json);
+                                }
+
+                            }
+                        }
+                    )
+                });
+
+
+            }
+
+            render() {
+                return (
+                    <div className="container">
+                        <div id="loader-1" className="loader"></div>
+                    </div>
+                )
+            }
+
+            componentDidMount() {
+                this.start();
+            }
+        }
+
+        class Content extends React.Component {
+
+            render() {
+                return (
+                    <div className="content">
+                        {this.props.children}
+                    </div>
+                )
+            }
+        }
+
+        class App extends React.Component {
+            constructor(props) {
+                super(props);
+                this.images = "https://raw.githubusercontent.com/playoutprod/2020-3wa-react01/master/01_FORMULAIRES_LIFTINGUP/exercices/slider/data.json";
+                this.state = {
+                    loading: false,
+                    data: null,
+                    currentIndex: null
+                };
+                this.onLoad = this.onLoad.bind(this);
+            }
+
+            onLoad(status, json) {
+                this.setState({ loading: status, data: json });
+            }
+
+            handleClick = (index) => {
+                this.setState({ currentIndex: index });
+            }
+
+            render() {
+                return (
+                    <div className="app">
+                        {this.state.loading == false ? <Loader url={this.images} onLoad={this.onLoad} /> : null}
+                        {this.state.data && <Content>
+                            <View data={this.state.data} currentIndex={this.state.currentIndex} />
+                            <List data={this.state.data} size="small" handleClick={this.handleClick} />
+                        </Content>
+                        }
+
+                    </div>
+                );
+            }
+        }
+
+        ReactDOM.render(<App />, document.getElementById("root"));
+    </script>
+</body>
+
+</html>

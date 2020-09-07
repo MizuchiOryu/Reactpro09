@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Hello React</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+    <!-- permet de compiler le JSX -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <style>
+        .heading{
+            color: purple;
+        }
+    </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+
+class AppLifeCycle extends React.Component{
+    constructor(props) {
+        super(props);
+        console.log("Constructor");
+        this.state = { count : 0 }
+        this.timer = setInterval(() => {
+          this.setState({ count : this.state.count + 1})
+        }, 1000);
+    }
+
+    // quand le rendu a été fait suite à sa création
+    componentDidMount(){
+      console.log("After render method");
+    }
+
+    // (*) avant chaque rendu
+    shouldComponentUpdate(){
+      return true; // flase => pas de mise à jour du rendu
+    }
+
+    // (*) exécuter après le rendu méthode render
+    // prevProps et prevState états précédents
+    // prevProps et prevState sont à comparer avec
+    // state et props si besoin
+    componentDidUpdate(prevProps, prevState){
+      console.log("Soit on recrée un Component, soit state change")
+      console.log(this.state, prevState);
+    }
+
+    // appeler après que le Component
+    // est été supprimer du DOM
+    componentWillUnmount(){
+      console.log("destrucion du Component");
+      clearInterval(this.timer);
+      clearInterval(removeCompent);
+
+    }
+
+    render(){
+        console.log("render");
+        return (<div>Hello React</div>)
+    }
+}
+
+// création de deux Component => mise à jour du Component
+
+ReactDOM.render(
+  <AppLifeCycle />,
+  document.getElementById('root')
+);
+
+const removeCompent = setInterval(() =>{
+        ReactDOM.unmountComponentAtNode( document.getElementById('root'))
+    }, 7000);
+</script>
+</body>
+
+</html>
