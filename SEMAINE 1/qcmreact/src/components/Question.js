@@ -1,71 +1,123 @@
-import React from 'react';
-import Result from './Result.js';
-import Form from './Form';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 
-import '../styles/question.css';
+// CSS
+import "./Question.scss";
 
-export default class Question extends React.Component{
-
-  constructor(props){
+class Question extends Component {
+  constructor(props) {
     super(props);
-    this.state = {
-      result:null
-    }
-  }
 
-  handleChange = (choice) => {
-    //Chaque fois que on selectionne un choix, on enreigistre dans le state si c'est la bonne réponse ou pas.
-    this.setState({
-      result : this.props.datas.qcm[this.props.currentQuestion].response === choice
-    })
+    this.state = { ...this.props };
   }
 
   handleSubmit = (e) => {
-    //Lorsqu'on clique sur le bouton, on passe la question courante ainsi que le state
     e.preventDefault();
-    this.props.onSubmit(this.props.currentQuestion,this.state.result);
+
+    const success = this.state.choice === (this.props.response || null);
+
+    this.setState({
+      success: success,
+      status: "closed",
+    });
+  };
+
+  handleInputChange = (e) => {
+    const choice = e.target.value;
+    if (choice != null) {
+      this.setState({
+        choice: choice,
+      });
+    }
+  };
+
+  // remettre à jour les states une fois une question sélectionnée
+  componentDidUpdate(prevProps) {
+    if (this.props.id !== prevProps.id) {
+      this.setState({ ...this.props });
+    }
   }
 
-  no_content = () => {
-    //Avant qu'une question soit selectionnée
-    return(<span className="alert alert-primary">Aucune question sélectionnée pour l’instant</span>)
+  render() {
+    const { title, badge, question, c1, c2, commandes } = this.props;
+
+    const Choices = [c1, c2].map((choice, k) => {
+      return (
+        <div key={k} className='form-check'>
+          <input
+            name='choice'
+            value={`c${k + 1}`}
+            onChange={this.handleInputChange}
+            className='form-check-input'
+            type='radio'
+            checked={this.state.choice === `c${k + 1}`}
+            id={`c${k + 1}`}
+          />
+          <label htmlFor={`c${k + 1}`} className='form-check-label'>
+            choice: {k + 1} {choice}
+          </label>
+        </div>
+      );
+    });
+
+    const error =
+      this.state.status === "closed" ||
+      this.state.success ||
+      this.state.choice === null;
+
+    return (
+      <article className='question'>
+        <h1 className='question__title'>
+          {title}
+          <small>{badge}</small>
+        </h1>
+        <p>{question}</p>
+        {commandes != null ? <code>{commandes}</code> : null}
+        <p className='notice'>
+          Choisissez une seule et bonne réponse ci-dessous, attention vous
+          n'avez qu'une tentative pour répondre :
+        </p>
+        {this.state.success ? (
+          <p className='alert-success'>Bravo vous avez bien répondu</p>
+        ) : this.state.success === false && this.state.status === "closed" ? (
+          <p className='alert-check'>
+            Désolé la bonne réponse était : {this.props.response}
+          </p>
+        ) : null}
+        <div className='form-group'>
+          <form onSubmit={this.handleSubmit}>
+            {Choices}
+            <button disabled={error} type='submit' className='btn btn-primary'>
+              Response
+            </button>
+          </form>
+        </div>
+      </article>
+    );
   }
-
-  content = () => {
-    //Un question a été selectionnée
-    const datas = this.props.datas.qcm[this.props.currentQuestion];
-    return(
-        <React.Fragment>
-          <h2>{datas.question}</h2>
-          {datas.commandes && <code>{datas.commandes}</code>}
-          {this.props.submited ? this.content_after_submit(datas) : this.content_before_submit(datas)}
-        </React.Fragment>
-    )
-  }
-
-  content_before_submit = (datas) => {
-    //Contenu d'un question avant submit (Formulaire)
-    const choices = {c1:datas.c1,c2:datas.c2}
-    return(
-      <Form choices={choices} currentQuestion={this.props.currentQuestion} onChange={this.handleChange} onSubmit={this.handleSubmit}/>)
-  }
-
-
-  content_after_submit = (datas) => {
-    //Contenu d'un question après submit (affichage du résultat)
-    return(
-      <Result result={this.state.result} response={datas[datas.response]}/>
-    )
-  }
-
-  render (){
-    return(
-      <div className="question">
-      {
-        this.props.currentQuestion === null ? this.no_content() : this.content()
-      }
-      </div>
-    )
-  }
-
 }
+
+Question.propTypes = {
+  id: function (props, propName, componentName) {
+    if (!/[1-9][0-9]*/.test(props[propName])) {
+      return new Error(
+        "Invalid prop `" +
+          propName +
+          "` supplied to" +
+          " `" +
+          componentName +
+          "`. Validation failed, not a number..."
+      );
+    }
+  },
+  title: PropTypes.string.isRequired,
+  badge: PropTypes.oneOf(["easy", "hard", "medium"]),
+  command: PropTypes.string,
+  c1: PropTypes.string,
+  c2: PropTypes.string,
+  response: PropTypes.string,
+  status: PropTypes.PropTypes.oneOf(["open", "closed"]),
+  success: PropTypes.bool,
+};
+
+export default Question;

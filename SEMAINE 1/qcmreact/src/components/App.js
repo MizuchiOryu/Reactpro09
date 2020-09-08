@@ -1,112 +1,69 @@
+import React, { Component } from "react";
+import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
+import Home from "./Home";
+import Qcm from "./Qcm";
+import Genre from "./Genre";
+import Nav from "./Nav";
+import NotFound from "./NotFound";
+import PropTypes from "prop-types";
 
-import React from 'react';
-import Layout from './Layout';
-import Menu from './Menu';
-import Question from './Question';
-import '../styles/style.scss';
-import 'bootstrap/dist/css/bootstrap.css';
+const url = process.env.PUBLIC_URL + "/data";
 
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-
-
-class App extends React.Component{
-
-  constructor(props){
+class App extends Component {
+  constructor(props) {
     super(props);
-
-    /*
-    datas contient les données du JSON
-    currentQUestion : La question sélectionnée
-    submited : True au moment du submit
-    end : True si l'utilisateur a répondu a toutes les questions
-    */
-
-    this.state = {
-      datas:null,
-      currentQuestion : null,
-      submited : false,
-      end:false
-    }
+    this.state = { genres: [], loading: false };
   }
 
-
-  handleSelect = (index) => {
-    //Appelée lorsqu'un title est cliqué, récupère l'index de 0 a 5
-    this.setState({
-      currentQuestion : index,
-      submited:false
-    })
-  }
-
-  handleSubmit = (questionIndex,result) => {
-    //Appelée lorsqu'un formulaire de question est envoyé, récupère l'index et le resultat (fail ou success)
-    const newDatas = {...this.state.datas};
-    //Update du status de la question dans les datas
-    newDatas.qcm[questionIndex].status = result ? "success" : "fail";
-
-    const openQuestions = newDatas.qcm.filter(elmt => elmt.status === 'open');
-    //Le nombre question ayant un status open est 0 : c'est la fin
-    //On met a jour les datas dans le state (pour les nouveaux status des questions)
-    if(openQuestions.length === 0){
-      this.setState({
-        submited:true,
-        datas : newDatas,
-        end:true
-      })
-    }else{
-      this.setState({
-        submited:true,
-        datas : newDatas
-      })
-    }
-  }
-
-  showEnd = () => {
-    //Affiche l'écran de fin
-    //On récupère nombre de questions ayant un status success
-    const good = this.state.datas.qcm.filter(elmt => elmt.status === 'success')
-
-    return(
-      <div className="jumbotron">
-          <h1 className="display-4">Votre résultat</h1>
-          <p className="lead">Vous avez bien répondu à {good.length} questions sur {this.state.datas.qcm.length}</p>
-        </div>
-
-    )
-  }
-
-  showQuestions = () => {
-    //Affiche le layout menu | question
-    return(
-      <Layout>
-        <Menu datas={this.state.datas} clickHandler={this.handleSelect}/>
-        <Question ref={this.qRef} datas={this.state.datas} currentQuestion={this.state.currentQuestion} submited={this.state.submited} onSubmit={this.handleSubmit}/>
-      </Layout>
-    )
-  }
-
-  render(){
-    return(
-      <div className="app">
-      {
-        this.state.end ? this.showEnd() : this.showQuestions()
+  componentDidMount() {
+    this.setState({ loading: true });
+    fetch(`${url}/qcm.json`).then((response) => {
+      if (response.ok) {
+        // objet JSON avec une promesse
+        response.json().then((content) => {
+          let genres = content["genres"];
+          // met à jour le render
+          this.setState({
+            genres: genres,
+            loading: false,
+          });
+        });
       }
-      </div>
-    )
+    });
   }
 
-
-
-  componentDidMount(){
-    //On mount on va chercher les datas
-    fetch('/datas/qcm.json')
-    .then(resp => {return(resp.json())})
-    .then(datas => {
-      this.setState({
-        datas:datas
-      })
-    })
+  render() {
+    return (
+      <>
+        <Router>
+          <Nav genres={this.state.genres} loading={this.state.loading} />
+          <Route exact path='/' component={Home} />
+          <Route exact path='/qcm' component={Qcm} />
+          <Route
+            exact
+            path='/genre/:id'
+            render={({ match }) =>
+              /^[1-9][0-9]{0,1}$/.test(match.params.id) ? (
+                <Genre id={parseInt(match.params.id)} />
+              ) : (
+                <NotFound />
+              )
+            }
+          />
+        </Router>
+      </>
+    );
   }
 }
+
+App.propTypes = {
+  loading: PropTypes.bool,
+  genres: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+    })
+  ),
+};
 
 export default App;
